@@ -20,11 +20,14 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
         try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
             session.createNativeQuery("CREATE TABLE IF NOT EXISTS users (" +
                     "id INT PRIMARY KEY AUTO_INCREMENT," +
                     "`name` VARCHAR(30)," +
                     "lastName VARCHAR(30)," +
-                    "age INT)");
+                    "age INT)")
+                    .executeUpdate();
+            session.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,7 +36,10 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void dropUsersTable() {
         try (Session session = sessionFactory.openSession()) {
-            session.createNativeQuery("DROP TABLE IF EXISTS users");
+            session.beginTransaction();
+            session.createNativeQuery("DROP TABLE IF EXISTS users")
+                    .executeUpdate();
+            session.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +52,7 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction = session.beginTransaction();
             session.save(new User(name, lastName, age));
             transaction.commit();
-            System.out.println("User ");
+            System.out.printf("User с именем - %s добавлен в базу данных\n", name);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -97,7 +103,7 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction = session.beginTransaction();
             //how will this run on big tables?
             //maybe use nativeQuery truncate?
-            session.createQuery("delete from User");
+            session.createQuery("delete from User").executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
