@@ -21,4 +21,5 @@ public class Main {
         userDao.cleanUsersTable();
         userDao.dropUsersTable();
     }
+
 }
