@@ -13,6 +13,8 @@ import java.util.List;
 public class UserDaoHibernateImpl implements UserDao {
 
     private static final SessionFactory sessionFactory = Util.getSessionFactory();
+
+    private Transaction transaction = null;
     public UserDaoHibernateImpl() {
 
     }
@@ -48,7 +50,6 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.save(new User(name, lastName, age));
@@ -64,7 +65,6 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.remove(session.get(User.class, id));
@@ -79,7 +79,6 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        Transaction transaction = null;
         List<User> users = new ArrayList<>();
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -99,7 +98,6 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             //how will this run on big tables?
